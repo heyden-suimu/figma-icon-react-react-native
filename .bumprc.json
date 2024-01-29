@@ -1,0 +1,11 @@
+{
+  "files": [
+    "package.json"
+  ],
+  "commit": false,
+  "commitMessage": "chore: Bump version to {{version}}",
+  "tag": false,
+  "tagName": "{{version}}",
+  "tagMessage": "Bump version to {{version}}",
+  "push": false
+}
