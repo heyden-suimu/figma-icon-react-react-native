@@ -129,7 +129,8 @@ async function processSvg (svg, name) {
     .then(svg => svg.replace(/style=\"([^\"]+)\"/g, (_,a) => `style={${a}}`).replace(/\@\@/g, '"')) //替换style里的逻辑
     .then(svg => svg.replace(/(\"\{)|(\}\")/g, (_,a, b) => a ? '{' : b ? '}':''))  //替换svg里面属性逻辑
     .then(svg => svg.replace(/\<svg([^\>]*)\>/, (_,a) => `<svg${a}{...otherProps}>`))  //给svg 加入 otherprops
-    .then(svg => svg.replace(/url\(#([^\)]*)\)/g, (_,a) => `url(#${IdMaps[a]})`))  //给svg 替换新Id
+    .then(svg => svg.replace(/url\(#([^\)]*)\)/g, (_,a) => `url(#${IdMaps[a]})`))  //给svg 替换新Id  针对 url(#id)
+    .then(svg => svg.replace(/href=\"#([^\"]*)\"/g, (_,a) => `href="#${IdMaps[a]}"`))  //给svg 替换新Id  针对 href="#id"
   return optimized;
 }
 
