@@ -43,14 +43,19 @@ function addStyleEl (ast, name) {
 
 //保持svg里面id的唯一性，重新替换ID
 const IdMaps = {}
-function changeIds (ast, name, index = 0,  level = 0) {
-  if (ast.attributes?.id) {
-    const newId = `${name}-${level}-${index}`
-    IdMaps[ast.attributes.id] = newId
-    ast.attributes.id = newId
-    level++
+//广度优先遍历
+function changeIds(root, name) {
+  let counter = 0;
+  const queue = [root];
+  while (queue.length > 0) {
+      const node = queue.shift();
+      if(node.attributes?.id){
+        const newId = `${name}-${counter++}`
+        IdMaps[name+node.attributes.id] = newId
+        node.attributes.id = newId
+      }
+      queue.push(...node.children);
   }
-  ast.children?.forEach((item, index) => changeIds(item, name, index, level));
 }
 
 /**
@@ -129,7 +134,8 @@ async function processSvg (svg, name) {
     .then(svg => svg.replace(/style=\"([^\"]+)\"/g, (_,a) => `style={${a}}`).replace(/\@\@/g, '"')) //替换style里的逻辑
     .then(svg => svg.replace(/(\"\{)|(\}\")/g, (_,a, b) => a ? '{' : b ? '}':''))  //替换svg里面属性逻辑
     .then(svg => svg.replace(/\<svg([^\>]*)\>/, (_,a) => `<svg${a}{...otherProps}>`))  //给svg 加入 otherprops
-    .then(svg => svg.replace(/url\(#([^\)]*)\)/g, (_,a) => `url(#${IdMaps[a]})`))  //给svg 替换新Id
+    .then(svg => svg.replace(/url\(#([^\)]*)\)/g, (_,a) => `url(#${IdMaps[name+a]})`))  //给svg 替换新Id  针对 url(#id)
+    .then(svg => svg.replace(/href=\"#([^\"]*)\"/g, (_,a) => `href="#${IdMaps[name+a]}"`))  //给svg 替换新Id  针对 href="#id"
   return optimized;
 }
 

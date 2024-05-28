@@ -8,7 +8,7 @@ const { getIconFormat, changeSvgName, hasChinese } = require("./utils");
 require("dotenv").config();
 const upperCamelCase = require("uppercamelcase");
 
-//需要figma的链接，和token
+//需要figma的链接，和token， 若没有可以脚本注入，可以直接写死
 const {FIGMA_TOKEN, FIGMA_FILE_URL} = process.env
 let options = {
   format: 'svg',
